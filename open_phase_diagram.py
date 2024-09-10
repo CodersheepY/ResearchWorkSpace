@@ -207,16 +207,17 @@ pd_A = GrandPotentialPhaseDiagram(all_entries_A, locked_Chem_Potential_A)
 # print("Entries for condition A after creating phase diagram:", pd_A.all_entries)
 
 # Output phase diagram and convex hull energy for condition A
+print('************************************************************************************************')
 print("Phase diagram for Hydrogen-rich condition:", pd_A)
 print("every energy is per atom: ",TestMat_entry_A.energy / 16)
 print(f"Hull energy for compound BaZrO3: {pd_A.get_hull_energy(TestMat_entry_A.composition)/16}")
-
+print("Energy above convex hull:",TestMat_entry_A.energy / 16 - pd_A.get_hull_energy_per_atom(TestMat_entry_A.composition))
 
 # Write results to file
-with open('Anode_BaZrO3.txt', 'w') as out_file:
+with open('Anode_Ba8Zr8O24.txt', 'w') as out_file:
     print(TestMat_Comp, file=out_file)
     print(TestMat_entry_A.energy / 16 - pd_A.get_hull_energy_per_atom(TestMat_entry_A.composition), file=out_file)
-
+    print('************************************************************************************************')
 # Locked chemical potentials for condition C
 locked_Chem_Potential_C = {'O2': O_Ener_C*2,'H2': H_Ener_C*2}
 print("Chemical potential for condition C:", locked_Chem_Potential_C)
@@ -227,12 +228,12 @@ print("Phase diagram for Oxygen-rich condition:",pd_C)
 
 print("every energy is per atom: ", TestMat_entry_C.energy / 16)
 print(f"Hull energy for compound BaZrO3: {pd_C.get_hull_energy(TestMat_entry_C.composition)/16}")
-
+print("Energy above convex hull:",TestMat_entry_C.energy / 16 - pd_C.get_hull_energy_per_atom(TestMat_entry_C.composition))
 # Write results to file
-with open('Cathode_BaZrO3.txt', 'w') as out_file:
+with open('Cathode_Ba8Zr8O24.txt', 'w') as out_file:
     print(TestMat_Comp, file=out_file)
     print(TestMat_entry_C.energy / 16 - pd_C.get_hull_energy_per_atom(TestMat_entry_C.composition), file=out_file)
-
+    print('************************************************************************************************')
 ########################################## Filtering CO2 as Element X ###########################################
 
 # Modify composition to account for CO2 (as X)
@@ -359,7 +360,7 @@ for j in range(0,len(entriesTotal_X)):
 
     with open('composition.txt', 'w') as out_file:
         originalLine = str(get_Composition)
-        fixedLine1 = originalLine.replace('\n', 'BaZrO3')
+        fixedLine1 = originalLine.replace('\n', 'Ba8Zr8O24')
         fixedLine2 = re.sub("[A-Za-z]+", lambda ele: " " + ele[0] + " ", fixedLine1)
         print(fixedLine2, file=out_file)
 
@@ -368,7 +369,7 @@ for j in range(0,len(entriesTotal_X)):
     with open('./num_Lines.txt', 'r') as out_file:
         numLinesO = out_file.readlines()
         numLines = numLinesO[0]
-        # numLines = numLines.replace('\n', 'BaZrO3')
+        # numLines = numLines.replace('\n', 'Ba8Zr8O24')
         numLines = int(numLines)
 
     numO = 0
@@ -381,15 +382,15 @@ for j in range(0,len(entriesTotal_X)):
 
         for k in range(0, numLines):
             holder[k] = holderOut[k]
-            holder[k] = holder[k].replace('\n', 'BaZrO3')
+            holder[k] = holder[k].replace('\n', 'Ba8Zr8O24')
 
             if holder[k] == 'C':
                 numCs = holderOut[k + 1]
-                numCs = str(numCs.replace('\n', 'BaZrO3'))
+                numCs = str(numCs.replace('\n', 'Ba8Zr8O24'))
                 numCs = int(numCs)
             elif holder[k] == 'O':
                 numOs = holderOut[k + 1]
-                numOs = str(numOs.replace('\n', 'BaZrO3'))
+                numOs = str(numOs.replace('\n', 'Ba8Zr8O24'))
                 numOs = int(numOs)
         
         C_exist_check = 'numC' in locals()
@@ -403,7 +404,7 @@ for j in range(0,len(entriesTotal_X)):
         
         if numC>0 and numO==0:
             numZ = 0
-            Mod_Comp = 'BaZrO3'
+            Mod_Comp = 'Ba8Zr8O24'
             if(numC == numO):
                 numZ = numC
                 g=1
@@ -466,11 +467,11 @@ pd_X = GrandPotentialPhaseDiagram(all_entries_X, locked_Chem_Potential_X)
 
 # Output phase diagram and convex hull energy for condition X
 print("Phase diagram for CO2-rich condition:",pd_X)
-print(TestMat_entry_X.energy / 16)
+print("every energy is per atom: ",TestMat_entry_X.energy / 16)
 print(f"Hull energy for compound BaZrO3: {pd_X.get_hull_energy(TestMat_entry_X.composition)/16}")
-
+print("Energy above convex hull:",TestMat_entry_X.energy / 16 - pd_X.get_hull_energy_per_atom(TestMat_entry_X.composition))
 # Write results to file
-with open('CO2_BaZrO3_X.txt', 'w') as out_file:
+with open('CO2_Ba8Zr8O24_X.txt', 'w') as out_file:
     print(TestMat_Comp, file=out_file)
     print(TestMat_entry_X.energy / 16 - pd_X.get_hull_energy_per_atom(TestMat_entry_X.composition), file=out_file)
 print('************************************************************************************************')

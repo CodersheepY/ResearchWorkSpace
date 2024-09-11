@@ -32,7 +32,7 @@ CO2_Comp = Composition('X')
 
 # Define energies for hydrogen and oxygen under condition A
 H_Ener_A = -4.024
-O_Ener_A = -8.006
+O_Ener_A = -6.166
 
 # Define entries for gases under condition A
 H2_Entry_A = ComputedEntry(H2_Comp, H_Ener_A * H2_Comp.num_atoms)
@@ -49,10 +49,10 @@ O2_Entry_C = ComputedEntry(O2_Comp, O_Ener_C * O2_Comp.num_atoms)
 H2O_Entry_C = ComputedEntry(H2O_Comp, H_Ener_C * H2_Comp.num_atoms + O_Ener_C * 0.5 * O2_Comp.num_atoms)
 
 # Define entries for gases under condition X
-O_Ener_X = -6.320
+O_Ener_X = -6.166
 O2_Entry_X = ComputedEntry(O2_Comp, O_Ener_X * O2_Comp.num_atoms)
-CO2_Ener_X = -24.388
-CO_Ener_X = -21.288
+CO2_Ener_X = -25.556
+CO_Ener_X = -20.232
 CO_Entry_X = ComputedEntry(CO_Comp, CO_Ener_X)
 CO2_Entry_X = ComputedEntry(CO2_Comp, CO2_Ener_X)
 
@@ -83,7 +83,6 @@ TestMat_Comp = Composition('Ba8Zr8O24')
 
 # Replace this with the computed energy for your material
 TestMat_Ener = -287.201 # Placeholder, insert the correct value here
-
 
 # Define computed entries for the material under condition A and C
 TestMat_entry_A = ComputedEntry(TestMat_Comp, TestMat_Ener - O_Ener_A * 24)
@@ -212,8 +211,8 @@ print("Phase diagram for Hydrogen-rich condition:", pd_A)
 print("every energy is per atom: ",TestMat_entry_A.energy / 16)
 print(f"Hull energy for compound Ba8Zr8O24: {pd_A.get_hull_energy(TestMat_entry_A.composition)/16}")
 print("Energy above convex hull:",TestMat_entry_A.energy / 16 - pd_A.get_hull_energy_per_atom(TestMat_entry_A.composition))
-plotter = PDPlotter(pd_A)
-plotter.show()
+# plotter = PDPlotter(pd_A)
+# plotter.show()
 
 # Write results to file
 with open('Anode_Ba8Zr8O24.txt', 'w') as out_file:
@@ -231,8 +230,8 @@ print("Phase diagram for Oxygen-rich condition:",pd_C)
 print("every energy is per atom: ", TestMat_entry_C.energy / 16)
 print(f"Hull energy for compound Ba8Zr8O24: {pd_C.get_hull_energy(TestMat_entry_C.composition)/16}")
 print("Energy above convex hull:",TestMat_entry_C.energy / 16 - pd_C.get_hull_energy_per_atom(TestMat_entry_C.composition))
-plotter = PDPlotter(pd_C)
-plotter.show()
+# plotter = PDPlotter(pd_C)
+# plotter.show()
 # Write results to file
 with open('Cathode_Ba8Zr8O24.txt', 'w') as out_file:
     print(TestMat_Comp, file=out_file)
@@ -475,8 +474,8 @@ print("Phase diagram for CO2-rich condition:",pd_X)
 print("every energy is per atom: ",TestMat_entry_X.energy / 16)
 print(f"Hull energy for compound Ba8Zr8O24: {pd_X.get_hull_energy(TestMat_entry_X.composition)/16}")
 print("Energy above convex hull:",TestMat_entry_X.energy / 16 - pd_X.get_hull_energy_per_atom(TestMat_entry_X.composition))
-plotter = PDPlotter(pd_X)
-plotter.show()
+# plotter = PDPlotter(pd_X)
+# plotter.show()
 # Write results to file
 with open('CO2_Ba8Zr8O24_X.txt', 'w') as out_file:
     print(TestMat_Comp, file=out_file)

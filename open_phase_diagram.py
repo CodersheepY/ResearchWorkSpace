@@ -11,7 +11,7 @@ from pymatgen.entries.computed_entries import ComputedEntry
 
 from pymatgen.analysis.phase_diagram import GrandPotPDEntry, PDEntry, GrandPotentialPhaseDiagram, PDPlotter, PhaseDiagram
 from pymatgen.entries.compatibility import MaterialsProject2020Compatibility
-from pymatgen.core import Element
+from t.core import Element
 
 from mp_api.client import MPRester
 from pymatgen.ext.matproj import MPRester
@@ -71,7 +71,7 @@ entriesGases_X = [O2_Entry_X, CO_Entry_X, CO2_Entry_X]
 ########################################### Material Entry ######################################################
 
 # Define the compound you are working on
-TestMat_Comp = Composition('Ba8Zr8O24')
+TestMat_Comp = Composition('Ba8Zr8O24') # Replace this with the correct formula
 
 # Debugging: get the atomic fraction of each element in the compound
 # print(f"Reduced formula: {TestMat_Comp.reduced_formula}")

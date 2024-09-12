@@ -11,7 +11,7 @@ from pymatgen.entries.computed_entries import ComputedEntry
 
 from pymatgen.analysis.phase_diagram import GrandPotPDEntry, PDEntry, GrandPotentialPhaseDiagram, PDPlotter, PhaseDiagram
 from pymatgen.entries.compatibility import MaterialsProject2020Compatibility
-from t.core import Element
+
 
 from mp_api.client import MPRester
 from pymatgen.ext.matproj import MPRester
@@ -71,7 +71,7 @@ entriesGases_X = [O2_Entry_X, CO_Entry_X, CO2_Entry_X]
 ########################################### Material Entry ######################################################
 
 # Define the compound you are working on
-TestMat_Comp = Composition('Ba8Zr8O24') # Replace this with the correct formula
+TestMat_Comp = Composition('Ba8Zr8O24')
 
 # Debugging: get the atomic fraction of each element in the compound
 # print(f"Reduced formula: {TestMat_Comp.reduced_formula}")
@@ -185,7 +185,7 @@ all_entries_C =all_entries_C +entriesGases_C
 # Locked chemical potentials for condition A
 locked_Chem_Potential_A = {'H2': H_Ener_A*2,'O2': O_Ener_A*2}
 print("Chemical potential for condition A:", locked_Chem_Potential_A)
-
+print("entriesGases_A: ",entriesGases_A)
 # Debugging: Output locked chemical potential for condition A
 # print("Chemical potential for condition A:", locked_Chem_Potential_A)
 
@@ -222,6 +222,7 @@ with open('Anode_Ba8Zr8O24.txt', 'w') as out_file:
 # Locked chemical potentials for condition C
 locked_Chem_Potential_C = {'O2': O_Ener_C*2,'H2': H_Ener_C*2}
 print("Chemical potential for condition C:", locked_Chem_Potential_C)
+print("entriesGases_C: ",entriesGases_C)
 pd_C = GrandPotentialPhaseDiagram(all_entries_C, locked_Chem_Potential_C)
     
 # Output phase diagram and convex hull energy for condition C
@@ -467,6 +468,7 @@ all_entries_X = all_entries_X + entries_VASP_X + entriesGases_X
 # Locked chemical potentials for condition X
 locked_Chem_Potential_X = {'X': CO2_Ener_X,'O2': O_Ener_X*2}
 print("Chemical potential for condition X:", locked_Chem_Potential_X)
+print("entriesGases_X: ",entriesGases_X)
 pd_X = GrandPotentialPhaseDiagram(all_entries_X, locked_Chem_Potential_X)
 
 # Output phase diagram and convex hull energy for condition X

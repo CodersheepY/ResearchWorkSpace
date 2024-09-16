@@ -1,7 +1,7 @@
 # input data: total energies of pristine, defective, and hydrated systems
-E_pristine = -333.79931146  #  pristine material total energy(eV) 
-E_Vox = -324.0019188      # Oxygen vacancy defect system total energy 
-E_OHx = -336.1187880      # protonic defect system total energy 
+E_pristine = -332.79931146  #  pristine material total energy(eV) 
+E_Vox = -319.36206100     # Oxygen vacancy defect system total energy 
+E_OHx = -333.42950727     # protonic defect system total energy 
 E_H2O = -14.891        # H2O total energy
 E_H2 = -6.715          # H2 total energy
 E_O2 = -9.896         # O2 total energy
@@ -11,7 +11,7 @@ ZPE_H2O = 0.56       # ZPE for water
 ZPE_H2 = 0.27       # ZPE for H2 
 ZPE_O2 = 0.10        # ZPE for O2 
 
-E_O2_corr = 2*((E_H2O + ZPE_H2O) -(E_H2 + ZPE_H2)) - E_O2
+E_O2_corr = 2*((E_H2O + ZPE_H2O) -(E_H2 + ZPE_H2)) - ZPE_O2
 print(E_O2_corr)
 E_H2_corr = E_H2 + ZPE_H2
 print(E_H2_corr)

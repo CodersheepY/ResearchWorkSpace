@@ -185,7 +185,7 @@ all_entries_C =all_entries_C +entriesGases_C
 # Locked chemical potentials for condition A
 locked_Chem_Potential_A = {'H2': H_Ener_A*2,'O2': O_Ener_A*2}
 print("Chemical potential for condition A:", locked_Chem_Potential_A)
-print("entriesGases_A: ",entriesGases_A)
+print("entriesGases_A: ", " | ".join(str(entry) for entry in entriesGases_A))
 # Debugging: Output locked chemical potential for condition A
 # print("Chemical potential for condition A:", locked_Chem_Potential_A)
 
@@ -203,7 +203,7 @@ print("entriesGases_A: ",entriesGases_A)
 pd_A = GrandPotentialPhaseDiagram(all_entries_A, locked_Chem_Potential_A)
 
 # Debugging: Print entries to ensure they contain oxygen
-# print("Entries for condition A after creating phase diagram:", pd_A.all_entries)
+print("Entries for condition A after creating phase diagram:", pd_A.all_entries)
 
 # Output phase diagram and convex hull energy for condition A
 print('************************************************************************************************')
@@ -211,8 +211,8 @@ print("Phase diagram for Hydrogen-rich condition:", pd_A)
 print("every energy is per atom: ",TestMat_entry_A.energy / 16)
 print(f"Hull energy for compound Ba8Zr8O24: {pd_A.get_hull_energy(TestMat_entry_A.composition)/16}")
 print("Energy above convex hull:",TestMat_entry_A.energy / 16 - pd_A.get_hull_energy_per_atom(TestMat_entry_A.composition))
-# plotter = PDPlotter(pd_A)
-# plotter.show()
+plotter = PDPlotter(pd_A)
+plotter.show()
 
 # Write results to file
 with open('Anode_Ba8Zr8O24.txt', 'w') as out_file:
@@ -221,18 +221,17 @@ with open('Anode_Ba8Zr8O24.txt', 'w') as out_file:
     print('************************************************************************************************')
 # Locked chemical potentials for condition C
 locked_Chem_Potential_C = {'O2': O_Ener_C*2,'H2': H_Ener_C*2}
-print("Chemical potential for condition C:", locked_Chem_Potential_C)
-print("entriesGases_C: ",entriesGases_C)
+# print("Chemical potential for condition C:", locked_Chem_Potential_C)
+print("entriesGases_C: ", " | ".join(str(entry) for entry in entriesGases_C))
 pd_C = GrandPotentialPhaseDiagram(all_entries_C, locked_Chem_Potential_C)
     
 # Output phase diagram and convex hull energy for condition C
 print("Phase diagram for Oxygen-rich condition:",pd_C)
-
 print("every energy is per atom: ", TestMat_entry_C.energy / 16)
 print(f"Hull energy for compound Ba8Zr8O24: {pd_C.get_hull_energy(TestMat_entry_C.composition)/16}")
 print("Energy above convex hull:",TestMat_entry_C.energy / 16 - pd_C.get_hull_energy_per_atom(TestMat_entry_C.composition))
-# plotter = PDPlotter(pd_C)
-# plotter.show()
+plotter = PDPlotter(pd_C)
+plotter.show()
 # Write results to file
 with open('Cathode_Ba8Zr8O24.txt', 'w') as out_file:
     print(TestMat_Comp, file=out_file)
@@ -468,7 +467,7 @@ all_entries_X = all_entries_X + entries_VASP_X + entriesGases_X
 # Locked chemical potentials for condition X
 locked_Chem_Potential_X = {'X': CO2_Ener_X,'O2': O_Ener_X*2}
 print("Chemical potential for condition X:", locked_Chem_Potential_X)
-print("entriesGases_X: ",entriesGases_X)
+print("entriesGases_X: ", " | ".join(str(entry) for entry in entriesGases_X))
 pd_X = GrandPotentialPhaseDiagram(all_entries_X, locked_Chem_Potential_X)
 
 # Output phase diagram and convex hull energy for condition X
@@ -476,8 +475,8 @@ print("Phase diagram for CO2-rich condition:",pd_X)
 print("every energy is per atom: ",TestMat_entry_X.energy / 16)
 print(f"Hull energy for compound Ba8Zr8O24: {pd_X.get_hull_energy(TestMat_entry_X.composition)/16}")
 print("Energy above convex hull:",TestMat_entry_X.energy / 16 - pd_X.get_hull_energy_per_atom(TestMat_entry_X.composition))
-# plotter = PDPlotter(pd_X)
-# plotter.show()
+plotter = PDPlotter(pd_X)
+plotter.show()
 # Write results to file
 with open('CO2_Ba8Zr8O24_X.txt', 'w') as out_file:
     print(TestMat_Comp, file=out_file)

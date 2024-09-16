@@ -1,7 +1,7 @@
 # input data: total energies of pristine, defective, and hydrated systems
-E_pristine = -332.79931146  #  pristine material total energy(eV) 
-E_Vox = -319.36206100     # Oxygen vacancy defect system total energy 
-E_OHx = -333.42950727     # protonic defect system total energy 
+E_pristine = -331.28931146  #  pristine material total energy(eV) 
+E_Vox = -318.76206100     # Oxygen vacancy defect system total energy 
+E_OHx = -333.11950727     # protonic defect system total energy 
 E_H2O = -14.891        # H2O total energy
 E_H2 = -6.715          # H2 total energy
 E_O2 = -9.896         # O2 total energy

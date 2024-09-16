@@ -32,7 +32,7 @@ CO2_Comp = Composition('X')
 
 # Define energies for hydrogen and oxygen under condition A
 H_Ener_A = -4.024
-O_Ener_A = -8.006
+O_Ener_A = -8.006 # update the value to -8.006
 
 # Define entries for gases under condition A
 H2_Entry_A = ComputedEntry(H2_Comp, H_Ener_A * H2_Comp.num_atoms)

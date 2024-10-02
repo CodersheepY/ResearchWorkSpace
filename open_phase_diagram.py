@@ -32,7 +32,7 @@ CO2_Comp = Composition('X')
 
 # Define energies for hydrogen and oxygen under condition A
 H_Ener_A = -4.024
-O_Ener_A = -8.006 # update the value to -8.006
+O_Ener_A = -8.006
 
 # Define entries for gases under condition A
 H2_Entry_A = ComputedEntry(H2_Comp, H_Ener_A * H2_Comp.num_atoms)
@@ -41,7 +41,7 @@ H2O_Entry_A = ComputedEntry(H2O_Comp, H_Ener_A * H2_Comp.num_atoms + O_Ener_A * 
 
 # Define energies for hydrogen and oxygen under condition C
 H_Ener_C = -4.997
-O_Ener_C = -8.006
+O_Ener_C = -6.166
 
 # Define entries for gases under condition C
 H2_Entry_C = ComputedEntry(H2_Comp, H_Ener_C * H2_Comp.num_atoms)
@@ -49,7 +49,7 @@ O2_Entry_C = ComputedEntry(O2_Comp, O_Ener_C * O2_Comp.num_atoms)
 H2O_Entry_C = ComputedEntry(H2O_Comp, H_Ener_C * H2_Comp.num_atoms + O_Ener_C * 0.5 * O2_Comp.num_atoms)
 
 # Define entries for gases under condition X
-O_Ener_X = -8.006
+O_Ener_X = -6.166
 O2_Entry_X = ComputedEntry(O2_Comp, O_Ener_X * O2_Comp.num_atoms)
 CO2_Ener_X = -25.556
 CO_Ener_X = -20.232
@@ -82,7 +82,7 @@ TestMat_Comp = Composition('Ba8Zr8O24')
 # print(f"Elemental composition: {TestMat_Comp.get_el_amt_dict()}")
 
 # Replace this with the computed energy for your material
-TestMat_Ener = -331.28931146 # Placeholder, insert the correct value here
+TestMat_Ener = 286.688 # Placeholder, insert the correct value here
 
 # Define computed entries for the material under condition A and C
 TestMat_entry_A = ComputedEntry(TestMat_Comp, TestMat_Ener - O_Ener_A * 24)

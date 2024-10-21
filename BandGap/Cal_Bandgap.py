@@ -1,20 +1,42 @@
-from ase import Atoms
-from ase.calculators.espresso import Espresso
+import os
+import numpy as np
+from ase.io.vasp import read_vasp_xml
 from ase.dft.bandgap import bandgap
 
-# Create a silicon crystal
-silicon = Atoms('Si', positions=[(0, 0, 0)], cell=[5.43, 5.43, 5.43], pbc=True)
+def get_bandgap(direct=False, output="bandgap_output.txt"):
+    """
+    Function to calculate the band gap from VASP output using ASE.
 
-# Create a calculator object
-calc = Espresso(pseudopotentials={'Si': 'Si.pbe-n-rrkjus_psl.1.0.0.UPF'},
-                input_data={
-                    'control': {'calculation': 'scf'},  # 自洽场计算
-                    'system': {'ecutwfc': 30},  # 截断能量（简化设置）
-                })
+    Returns:
+    gap: float
+        The band gap value in eV.
+    p1: tuple
+        Tuple with indices of the valence band maximum.
+    p2: tuple
+        Tuple with indices of the conduction band minimum.
+    """
+    # read the vasprun.xml file
+    vasp_xml_path = "vasprun.xml"
+    calc = read_vasp_xml(vasp_xml_path)
+    
+    # calculate the band gap
+    gap, p1, p2 = bandgap(calc, direct=direct)
 
-# Attach the calculator to the silicon crystal
-silicon.calc = calc
+    result = ""
+    # Display and prepare the results for output
+    if gap > 0:
+        result = f"Band Gap: {gap:.2f} eV\nValence band max (v): {p1}\nConduction band min (c): {p2}\n"
+        print(result)
+    else:
+        result = "The material is metallic (no band gap).\n"
+        print(result)
 
-# Calculate the band gap
-gap, p1, p2 = bandgap(silicon.calc)
-print(f"Band gap: {gap} eV")
+    # Write the result to the output file
+    with open(output, 'w') as f:
+        f.write(result)
+    
+    print(f"Results written to {output}")
+    
+    return gap, p1, p2
+if __name__ == "__main__":
+    get_bandgap()

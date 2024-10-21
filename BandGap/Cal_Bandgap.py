@@ -16,11 +16,19 @@ def get_bandgap(direct=False, output="bandgap_output.txt"):
         Tuple with indices of the conduction band minimum.
     """
     # read the vasprun.xml file
-    vasp_xml_path = "vasprun.xml"
+    vasp_xml_path = "./vasprun.xml"
     calc = read_vasp_xml(vasp_xml_path)
     
+    # Ensure eigenvalues and fermi level are available
+    try:
+        eigenvalues = calc.get_eigenvalues()
+        efermi = calc.get_fermi_level()
+    except AttributeError as e:
+        print(f"Error reading {vasp_xml_path} or calculating the band gap: {e}")
+        return
+
     # calculate the band gap
-    gap, p1, p2 = bandgap(calc, direct=direct)
+    gap, p1, p2 = bandgap(eigenvalues=eigenvalues, efermi=efermi, direct=direct)
 
     result = ""
     # Display and prepare the results for output
@@ -38,5 +46,6 @@ def get_bandgap(direct=False, output="bandgap_output.txt"):
     print(f"Results written to {output}")
     
     return gap, p1, p2
+
 if __name__ == "__main__":
     get_bandgap()

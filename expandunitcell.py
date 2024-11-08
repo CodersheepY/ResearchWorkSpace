@@ -1,10 +1,10 @@
 from pymatgen.core import Structure
 
 # Load the BaAlO₃ CIF file
-structure = Structure.from_file("BaZrO3.cif")
+structure = Structure.from_file("BaCoO3.cif")
 
 # Expand the unit cell by 2x2x2 to get Ba8Al8O24
 expanded_structure = structure * (2, 2, 2)
 
 # Save the expanded structure as a new CIF file
-expanded_structure.to(filename="Ba8Zr8O24.cif")
+expanded_structure.to(filename="Ba8Co8O24.cif")

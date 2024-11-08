@@ -1,7 +1,7 @@
 from ase.io import read, write
 
 # read your CIF file
-structure = read('Ba8Fe8O24.cif')
+structure = read('Ba8Co8O24.cif')
 
 # write the POSCAR file
-write('POSCAR2', structure, format='vasp')
+write('POSCAR3', structure, format='vasp')

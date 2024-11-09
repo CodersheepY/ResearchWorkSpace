@@ -482,4 +482,3 @@ with open('CO2_Ba8Zr8O24_X.txt', 'w') as out_file:
     print(TestMat_Comp, file=out_file)
     print(TestMat_entry_X.energy / 16 - pd_X.get_hull_energy_per_atom(TestMat_entry_X.composition), file=out_file)
 print('************************************************************************************************')
-

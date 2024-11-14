@@ -71,7 +71,7 @@ entriesGases_X = [O2_Entry_X, CO_Entry_X, CO2_Entry_X]
 ########################################### Material Entry ######################################################
 
 # Define the compound you are working on
-TestMat_Comp = Composition('Ba8Zr8O24')
+TestMat_Comp = Composition('Ba8Fe8O24')
 
 # Debugging: get the atomic fraction of each element in the compound
 # print(f"Reduced formula: {TestMat_Comp.reduced_formula}")
@@ -82,7 +82,7 @@ TestMat_Comp = Composition('Ba8Zr8O24')
 # print(f"Elemental composition: {TestMat_Comp.get_el_amt_dict()}")
 
 # Replace this with the computed energy for your material
-TestMat_Ener = -331.28931146 # Placeholder, insert the correct value here
+TestMat_Ener = -268.28931146 # Placeholder, insert the correct value here
 
 # Define computed entries for the material under condition A and C
 TestMat_entry_A = ComputedEntry(TestMat_Comp, TestMat_Ener - O_Ener_A * 24)
@@ -101,11 +101,19 @@ entries_VASP_C = [TestMat_entry_C]
 # print("entries_VASP_C:", entries_VASP_C)
 
 # Initialize MPRester to get material entries from the Materials Project
-api = MPRester('kzum4sPsW7GCRwtOqgDIr3zhYrfpaguK')
+api = 'kzum4sPsW7GCRwtOqgDIr3zhYrfpaguK'
 
-# Fetch entries from Materials Project for the compound system under consideration
-entries_MP_Org_AC = api.get_entries_in_chemsys(['Ba','Zr','O','H'])
-entries_MP_Org_X = api.get_entries_in_chemsys(['Ba','Zr','O','C'])
+# Automatically extract elements in TestMat_Comp
+elements = [str(element) for element in TestMat_Comp.elements]
+
+# Initialize MPRester to get material entries from the Materials Project
+with MPRester(api) as api:
+        entries_MP_Org_AC = api.get_entries_in_chemsys(
+            elements + ['O', 'H']
+        )
+        entries_MP_Org_X = api.get_entries_in_chemsys(
+            elements + ['O', 'C']
+        )
 
 # Debugging: Print fetched entries from Materials Project
 # print("entries_MP_Org_AC:", entries_MP_Org_AC)

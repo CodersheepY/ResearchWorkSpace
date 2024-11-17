@@ -1,13 +1,11 @@
 #!/usr/bin/env python
 
 # Headers and Imports
-from pymatgen.core import Composition
+from pymatgen.core import Composition, periodic_table
 from pymatgen.entries.computed_entries import ComputedEntry
-from pymatgen.analysis.phase_diagram import GrandPotentialPhaseDiagram, PhaseDiagram
+from pymatgen.analysis.phase_diagram import GrandPotentialPhaseDiagram
 from pymatgen.entries.compatibility import MaterialsProject2020Compatibility
 from mp_api.client import MPRester
-import sys
-import os
 
 
 # Global Initialization Hydrogen and Oxygen Experimental Conditions
@@ -28,38 +26,41 @@ def initialize_global_variables():
     O_Ener_A = -8.006
     H_Ener_C = -4.997
     O_Ener_C = -6.166
-    O_Ener_X = -6.320
+    O_Ener_X = -6.166
     CO2_Ener_X = -25.556
     CO_Ener_X = -20.232
+
+    # Define dummy species 
+    X = periodic_table.DummySpecies("X")
 
     # Define compositions for gases
     H2_Comp = Composition("H2")
     O2_Comp = Composition("O2")
     H2O_Comp = Composition("H2O")
     CO_Comp = Composition("CO")
-    CO2_Comp = Composition("CO2")
+    CO2_Comp = Composition("X")
 
     # Define entries for each condition
     entriesGases_A = [
-        ComputedEntry(H2_Comp, H_Ener_A * H2_Comp.num_atoms, entry_id='H2_A'),
-        ComputedEntry(O2_Comp, O_Ener_A * O2_Comp.num_atoms, entry_id='O2_A'),
-        ComputedEntry(H2O_Comp, H_Ener_A * H2O_Comp.num_atoms + O_Ener_A * 0.5 * O2_Comp.num_atoms, entry_id='H2O_A')
+        ComputedEntry(H2_Comp, H_Ener_A * H2_Comp.num_atoms),
+        ComputedEntry(O2_Comp, O_Ener_A * O2_Comp.num_atoms),
+        ComputedEntry(H2O_Comp, H_Ener_A * H2_Comp.num_atoms + O_Ener_A * 0.5 * O2_Comp.num_atoms)
     ]
     entriesGases_C = [
-        ComputedEntry(H2_Comp, H_Ener_C * H2_Comp.num_atoms, entry_id='H2_C'),
-        ComputedEntry(O2_Comp, O_Ener_C * O2_Comp.num_atoms, entry_id='O2_C'),
-        ComputedEntry(H2O_Comp, H_Ener_C * H2O_Comp.num_atoms + O_Ener_C * 0.5 * O2_Comp.num_atoms, entry_id='H2O_C')
+        ComputedEntry(H2_Comp, H_Ener_C * H2_Comp.num_atoms),
+        ComputedEntry(O2_Comp, O_Ener_C * O2_Comp.num_atoms),
+        ComputedEntry(H2O_Comp, H_Ener_C * H2_Comp.num_atoms + O_Ener_C * 0.5 * O2_Comp.num_atoms)
     ]
     entriesGases_X = [
-        ComputedEntry(O2_Comp, O_Ener_X * O2_Comp.num_atoms, entry_id='O2_X'),
-        ComputedEntry(CO_Comp, CO_Ener_X, entry_id='CO_X'),
-        ComputedEntry(CO2_Comp, CO2_Ener_X, entry_id='CO2_X')
+        ComputedEntry(O2_Comp, O_Ener_X * O2_Comp.num_atoms),
+        ComputedEntry(CO_Comp, CO_Ener_X),
+        ComputedEntry(CO2_Comp, CO2_Ener_X)
     ]
 
     # Define chemical potentials
-    locked_Chem_Potential_A = {'H2': H_Ener_A * 2, 'O2': O_Ener_A * 2}
-    locked_Chem_Potential_C = {'H2': H_Ener_C * 2, 'O2': O_Ener_C * 2}
-    locked_Chem_Potential_X = {'O2': O_Ener_X * 2, 'CO2': CO2_Ener_X}
+    locked_Chem_Potential_A = {'H': H_Ener_A, 'O': O_Ener_A}
+    locked_Chem_Potential_C = {'H': H_Ener_C, 'O': O_Ener_C}
+    locked_Chem_Potential_X = {'O': O_Ener_X, 'X': CO2_Ener_X}
 
 
 # Material Entry
@@ -68,7 +69,7 @@ def prepare_material_entries(api, TestMat_Comp, TestMat_Ener):
     Prepare material entries and fetch entries from the Materials Project for a given material.
 
     Args:
-        api: API key for the Materials Project.
+        api_key (str): API key for the Materials Project.
         TestMat_Comp (str): Composition of the material.
         TestMat_Ener (float): Energy of the material.
 
@@ -82,12 +83,10 @@ def prepare_material_entries(api, TestMat_Comp, TestMat_Ener):
     # Define the material's composition
     TestMat_Comp = Composition(TestMat_Comp)
 
-    num_O = TestMat_Comp.get("O", 0)
-
-    # Define computed entries for the material under conditions A, C and X with unique entry_ids
-    TestMat_entry_A = ComputedEntry(TestMat_Comp, TestMat_Ener - (O_Ener_A * num_O), entry_id='TestMat_A')
-    TestMat_entry_C = ComputedEntry(TestMat_Comp, TestMat_Ener - (O_Ener_C * num_O), entry_id='TestMat_C')
-    TestMat_entry_X = ComputedEntry(TestMat_Comp, TestMat_Ener - (O_Ener_X * num_O), entry_id='TestMat_X')
+    # Define computed entries for the material under conditions A, C and X
+    TestMat_entry_A = ComputedEntry(TestMat_Comp, TestMat_Ener)
+    TestMat_entry_C = ComputedEntry(TestMat_Comp, TestMat_Ener)
+    TestMat_entry_X = ComputedEntry(TestMat_Comp, TestMat_Ener)
 
     # Initialize compatibility module
     compat = MaterialsProject2020Compatibility()
@@ -111,16 +110,18 @@ def prepare_material_entries(api, TestMat_Comp, TestMat_Ener):
     # Combine the fetched entries with the VASP computed entries for Conditions A and C
     entries_VASP_A = [TestMat_entry_A]
     entries_VASP_C = [TestMat_entry_C]
+    entries_VASP_X = [TestMat_entry_X]
 
     all_entries_A = entries_MP_Org_AC + entries_VASP_A
     all_entries_C = entries_MP_Org_AC + entries_VASP_C
+    all_entries_X1 = entries_MP_Org_X + entries_VASP_X
     entriesTotal_X = entries_MP_Org_X
 
-    return all_entries_A, all_entries_C, entriesTotal_X, TestMat_entry_A, TestMat_entry_C, TestMat_entry_X
+    return all_entries_A, all_entries_C, all_entries_X1, entriesTotal_X, TestMat_entry_A, TestMat_entry_C, TestMat_entry_X
 
 
 # Condition A
-def calculate_phase_diagram_condition_A(all_entries_A, entriesGases_A, TestMat_entry_A):
+def calculate_phase_diagram_condition_A(all_entries_A, entriesGases_A, locked_Chem_Potential_A, TestMat_entry_A):
     """
     Calculate the phase diagram and energy above the hull for Condition A (Hydrogen-rich environment).
 
@@ -138,22 +139,30 @@ def calculate_phase_diagram_condition_A(all_entries_A, entriesGases_A, TestMat_e
     eliminate_AC = ['H2', 'O2', 'H2O']
 
     # Filter out these species from all_entries_A
-    all_entries_A = [e for e in all_entries_A if e.composition.reduced_formula not in eliminate_AC]
-    all_entries_A += entriesGases_A
+    all_entries_A = list(filter(lambda e: e.composition.reduced_formula not in eliminate_AC, all_entries_A))
+    all_entries_A = all_entries_A + entriesGases_A
 
     # Create phase diagram for Condition A
-    pd_A = PhaseDiagram(all_entries_A)
+    pd_A = GrandPotentialPhaseDiagram(all_entries_A, locked_Chem_Potential_A)
 
     # Calculate energy per atom
     energy_per_atom_A = TestMat_entry_A.energy / TestMat_entry_A.composition.num_atoms
 
-    # Get the Energy Above Hull
-    energy_above_hull_A = TestMat_entry_A.energy / TestMat_entry_A.composition.num_atoms - pd_A.get_hull_energy_per_atom(TestMat_entry_A.composition)
-    return pd_A, energy_per_atom_A, energy_above_hull_A
+    # Get the grand potential entry
+    gpe = next((e for e in pd_A.all_entries if e.original_entry == TestMat_entry_A), None)
+
+    # Calculate formation energy
+    formation_energy_A= pd_A.get_form_energy_per_atom(gpe)
+
+    # Calculate energy above hull
+    energy_above_hull_A = pd_A.get_e_above_hull(gpe)
+    # energy_above_hull_A = TestMat_entry_A.energy / TestMat_entry_A.composition.num_atoms - pd_A.get_hull_energy_per_atom(TestMat_entry_A.composition)
+
+    return pd_A, energy_per_atom_A, formation_energy_A, energy_above_hull_A
 
 
 # Condition C
-def calculate_phase_diagram_condition_C(all_entries_C, entriesGases_C, TestMat_entry_C):
+def calculate_phase_diagram_condition_C(all_entries_C, entriesGases_C, locked_Chem_Potential_C, TestMat_entry_C):
     """
     Calculate the phase diagram and energy above the hull for Condition C (Oxygen-rich environment).
 
@@ -172,147 +181,118 @@ def calculate_phase_diagram_condition_C(all_entries_C, entriesGases_C, TestMat_e
 
     # Filter out these species from all_entries_C
     all_entries_C = list(filter(lambda e: e.composition.reduced_formula not in eliminate_AC, all_entries_C))
-    all_entries_C += entriesGases_C
+    all_entries_C = all_entries_C + entriesGases_C
 
     # Create phase diagram for Condition C
-    pd_C = PhaseDiagram(all_entries_C)
+    pd_C = GrandPotentialPhaseDiagram(all_entries_C, locked_Chem_Potential_C)
 
     # Calculate energy per atom
     energy_per_atom_C = TestMat_entry_C.energy / TestMat_entry_C.composition.num_atoms
 
-    # Get the Energy Above Hull
-    #energy_above_hull_C = pd_C.get_e_above_hull(TestMat_entry_C)
-    energy_above_hull_C = TestMat_entry_C.energy / TestMat_entry_C.composition.num_atoms - pd_C.get_hull_energy_per_atom(TestMat_entry_C.composition)
-    return pd_C, energy_per_atom_C, energy_above_hull_C
+    # Get the grand potential entry
+    gpe = next((e for e in pd_C.all_entries if e.original_entry == TestMat_entry_C), None)
+
+    # Calculate formation energy
+    formation_energy_C = pd_C.get_form_energy_per_atom(gpe)
+
+    # Calculate energy above hull
+    energy_above_hull_C = pd_C.get_e_above_hull(gpe)
+    # energy_above_hull_C = TestMat_entry_C.energy / 16 - pd_C.get_hull_energy_per_atom(TestMat_entry_C.composition)
+
+    return pd_C, energy_per_atom_C, formation_energy_C, energy_above_hull_C
 
 
 # Condition X
-def calculate_phase_diagram_condition_X(entriesTotal_X, entriesGases_X, TestMat_entry_X):
+def calculate_phase_diagram_condition_X(all_entries_X1, entriesGases_X, locked_Chem_Potential_X, TestMat_entry_X, entriesTotal_X):
     """
     Calculate the phase diagram and energy above the hull for Condition X (CO2-rich environment).
 
     Args:
-        entriesTotal_X (list): List of ComputedEntry objects for Condition X.
+        all_entries_X (list): List of ComputedEntry objects for Condition X.
         entriesGases_X (list): List of ComputedEntry objects for gases under Condition X.
         locked_Chem_Potential_X (dict): Locked chemical potentials for Condition X.
         TestMat_entry_X (ComputedEntry): ComputedEntry object for the material under Condition X.
+        entriesTotal_X (list): List of ComputedEntry objects for Condition X.
+        entries_VASP_X (list): List of ComputedEntry objects for Condition X.
 
     Returns:
         tuple: Phase diagram for Condition X, energy per atom, formation energy, and energy above hull.
     """
 
-    # Define species to eliminate
-    eliminate_X = ['CO', 'CO2', 'O2']
-
+    # Filter out CO, X, and O2 from entriesTotal_X
+    eliminate_X = ['CO', 'X', 'O2']
 
     # Filter out these species from entriesTotal_X
-    all_entries_X = list(filter(lambda e: e.composition.reduced_formula not in eliminate_X, entriesTotal_X))
-    all_entries_X += entriesGases_X
-    all_entries_X.append(TestMat_entry_X)
+    all_entries_X1 = list(filter(lambda e: e.composition.reduced_formula not in eliminate_X, entriesTotal_X))
+    all_entries_X = all_entries_X1 + entriesGases_X
 
     # Create phase diagram for Condition X
-    pd_X = PhaseDiagram(all_entries_X)
+    pd_X = GrandPotentialPhaseDiagram(all_entries_X, locked_Chem_Potential_X)
 
     # Calculate energy per atom
     energy_per_atom_X = TestMat_entry_X.energy / TestMat_entry_X.composition.num_atoms
 
-    # Get the Energy Above Hull
-    #energy_above_hull_X = pd_X.get_e_above_hull(TestMat_entry_X)
-    energy_above_hull_X = TestMat_entry_X.energy / TestMat_entry_X.composition.num_atoms - pd_X.get_hull_energy_per_atom(TestMat_entry_X.composition)
+    # Get the grand potential entry
+    gpe = next((e for e in pd_X.all_entries if e.original_entry == TestMat_entry_X), None)
+    if gpe is None:
+        raise ValueError("TestMat_entry_X not found in transformed entries of the phase diagram.")
 
-    return pd_X, energy_per_atom_X, energy_above_hull_X
+    # Calculate formation energy
+    formation_energy_X = pd_X.get_form_energy_per_atom(gpe)
+
+    # Calculate energy above hull
+    energy_above_hull_X = pd_X.get_e_above_hull(gpe)
+    # energy_above_hull_X = TestMat_entry_X.energy / TestMat_entry_X.composition.num_atoms - pd_X.get_hull_energy_per_atom(TestMat_entry_X.composition)
+
+    return pd_X, energy_per_atom_X, formation_energy_X, energy_above_hull_X
 
 
 # Main Function
 def main():
-    # Determine input compositions
-    if len(sys.argv) < 2:
-        # No command-line arguments provided; attempt to read from 'composition.txt'
-        input_file = 'composition.txt'
-        if not os.path.isfile(input_file):
-            print("No compositions provided as arguments and 'composition.txt' not found.")
-            print("Usage: python phase_diagram.py 'Composition1' 'Composition2' ...")
-            sys.exit(1)
-        with open(input_file, 'r') as f:
-            compositions = [line.strip() for line in f if line.strip()]
-    else:
-        # Compositions provided as command-line arguments
-        compositions = sys.argv[1:]
+    api = "kzum4sPsW7GCRwtOqgDIr3zhYrfpaguK"
+    TestMat_Comp = "Ba8Zr8O24"
+    TestMat_Ener = -333.71584216
 
-    if not compositions:
-        print("No valid compositions found to process.")
-        sys.exit(1)
-
-    # Initialize gas entries and chemical potentials
+    # Initialize global gas entries and chemical potentials
     initialize_global_variables()
 
-    # API key for Materials Project (replace with your actual API key)
-    api_key = 'kzum4sPsW7GCRwtOqgDIr3zhYrfpaguK'  # Replace with your actual API key
+    # Prepare material entries
+    all_entries_A, all_entries_C, all_entries_X1, entriesTotal_X, TestMat_entry_A, TestMat_entry_C, TestMat_entry_X = prepare_material_entries(
+        api, TestMat_Comp, TestMat_Ener
+    )
 
-    # Iterate over each composition
-    for comp_str in compositions:
-        # Define the composition
-        TestMat_Comp = comp_str
+    # Calculate phase diagrams and energies for each condition
+    pd_A, energy_per_atom_A, formation_energy_A, energy_above_hull_A = calculate_phase_diagram_condition_A(
+        all_entries_A, entriesGases_A, locked_Chem_Potential_A, TestMat_entry_A
+    )
+    pd_C, energy_per_atom_C, formation_energy_C, energy_above_hull_C = calculate_phase_diagram_condition_C(
+        all_entries_C, entriesGases_C, locked_Chem_Potential_C, TestMat_entry_C
+    )
+    pd_X, energy_per_atom_X, energy_above_hull_X, formation_energy_X = calculate_phase_diagram_condition_X(
+        all_entries_X1, entriesGases_X, locked_Chem_Potential_X, TestMat_entry_X, entriesTotal_X
+    )
 
-        # Placeholder for TestMat_Ener; replace with actual energy value or a method to obtain it
-        TestMat_Ener = -269.50201809  # Example value; replace with actual energy
+    # Print results for condition A (Hydrogen-rich)
+    print("Condition A (Hydrogen-rich):")
+    print("Phase diagram:", pd_A)
+    print("Energy per atom:", energy_per_atom_A)
+    print("Energy above hull:", formation_energy_A)
+    print("Energy above hull:", energy_above_hull_A)
 
-        print(f"\nProcessing composition: {comp_str}")
+    # Print results for condition C (Oxygen-rich)
+    print("\nCondition C (Oxygen-rich):")
+    print("Phase diagram:", pd_C)
+    print("Energy per atom:", energy_per_atom_C)
+    print("Energy above hull:", formation_energy_C)
+    print("Energy above hull:", energy_above_hull_C)
 
-        # Prepare material entries
-        all_entries_A, all_entries_C, entriesTotal_X, TestMat_entry_A, TestMat_entry_C, TestMat_entry_X = prepare_material_entries(
-            api=api_key,
-            TestMat_Comp=TestMat_Comp,
-            TestMat_Ener=TestMat_Ener
-        )
-
-        # Calculate phase diagram for Condition A
-        pd_A, energy_per_atom_A, energy_above_hull_A = calculate_phase_diagram_condition_A(
-            all_entries_A,
-            entriesGases_A,
-            TestMat_entry_A
-        )
-
-        # Calculate phase diagram for Condition C
-        pd_C, energy_per_atom_C, energy_above_hull_C = calculate_phase_diagram_condition_C(
-            all_entries_C,
-            entriesGases_C,
-            TestMat_entry_C
-        )
-
-        # Calculate phase diagram for Condition X
-        pd_X, energy_per_atom_X, energy_above_hull_X = calculate_phase_diagram_condition_X(
-            entriesTotal_X,
-            entriesGases_X,
-            TestMat_entry_X
-        )
-
-        # Output results
-        print(f"Results for {comp_str}:")
-        print(f"Condition A - {pd_A}")
-        print(f"Condition C - {pd_C}")
-        print(f"Condition X - {pd_X}")
-        print(f"Condition A - Energy Above Hull: {energy_above_hull_A}")
-        print(f"Condition C - Energy Above Hull: {energy_above_hull_C}")
-        print(f"Condition X - Energy Above Hull: {energy_above_hull_X}")
-
-        # Write results to files
-        with open(f'Anode_{comp_str}.txt', 'w') as out_file_A:
-            out_file_A.write(f"{comp_str}\n")
-            out_file_A.write(f"{energy_above_hull_A}\n")
-            out_file_A.write('************************************************************************************************\n')
-
-        with open(f'Cathode_{comp_str}.txt', 'w') as out_file_C:
-            out_file_C.write(f"{comp_str}\n")
-            out_file_C.write(f"{energy_above_hull_C}\n")
-            out_file_C.write('************************************************************************************************\n')
-
-        with open(f'CO2_{comp_str}_X.txt', 'w') as out_file_X:
-            out_file_X.write(f"{comp_str}\n")
-            out_file_X.write(f"{energy_above_hull_X}\n")
-            out_file_X.write('************************************************************************************************\n')
+    # # Print results for condition X (CO2-rich)
+    print("\nCondition X (CO2-rich):")
+    print("Phase diagram:", pd_X)
+    print("Energy per atom:", energy_per_atom_X)
+    print("Energy above hull:", formation_energy_X)
+    print("Energy above hull:", energy_above_hull_X)
 
 
-# Run the Script
 if __name__ == "__main__":
     main()

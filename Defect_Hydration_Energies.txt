@@ -1,3 +1,0 @@
-Corrected Defect Formation Energy for Oxygen Vacancy (Vox): 19.980000000000018 eV
-Corrected Defect Formation Energy for Protonic Defect (OHx): 9.990000000000009 eV
-Corrected Hydration Energy (OHx): 2039.54 eV

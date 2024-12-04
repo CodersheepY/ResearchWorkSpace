@@ -30,7 +30,7 @@ def calculate_oh_bond_lengths(poscar_path: str, oh_tolerance: float = 1.2):
     return oh_bonds
 
 # Use the function
-poscar_file = "Ba8Zr8O24_H1.vasp"  # Replace with the actual POSCAR file path
+poscar_file = "bazro3_h.vasp"  # Replace with the actual POSCAR file path
 oh_bond_lengths = calculate_oh_bond_lengths(poscar_file)
 
 # Output the results
